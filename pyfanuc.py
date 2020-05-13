@@ -158,15 +158,19 @@ class focas():
 					r[first+x]=val
 		return r
 	def readpmc(self,datatype,section,first,count=1):
-		last=first+(1<<datatype)*count-1
+		shiftval=datatype
+		if datatype==4 or datatype==5:shiftval=datatype-2 #32bit/64bit-REAL
+		last=first+(1<<shiftval)*count-1
 		st=self._req_single(2,1,0x8001,first,last,section,datatype)
 		if st["len"]<=0:return
 		r={}
-		for x in range(st["len"]>>datatype):
-			pos=(1<<datatype)*x
+		for x in range(st["len"]>>shiftval):
+			pos=(1<<shiftval)*x
 			if datatype==0: value=st["data"][pos]
 			elif datatype==1: value=unpack(">H",st["data"][pos:pos+2])[0]
 			elif datatype==2: value=unpack(">I",st["data"][pos:pos+4])[0]
+			elif datatype==4: value=unpack(">I",st["data"][pos:pos+4])[0] #Todo
+			elif datatype==5: value=unpack(">I",st["data"][pos:pos+4])[0] #Todo
 			r[first+(1<<datatype)*x]=value
 		return r
 
