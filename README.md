@@ -5,8 +5,10 @@ The python-source is based on protocol analysis.
 The problem is, that the Fanuc Focas Library does not have proper linux support.
 The current target platform for protocol-analysis is an EDM-machine with a 160W control and a Robodrill 30i.
 
-## GETTIMEDATE Date 14.05.2020
-### Request
+## Protocol samples
+
+### GETTIMEDATE Date 14.05.2020
+#### Request
 Header
 | Sync        | Version | Request | Request length | Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
@@ -18,7 +20,7 @@ Subpacket 1 (length=length+2)
 |  00 1c |   00 01   |00 01 00 45| 00 00 00 00 |00 00 00 00|00 00 00 00|00 00 00 00|00 00 00 00|
 |        | CNC=1/PMC=2 |           | DATE=0/TIME=1 |           |           |           |           |
 
-### Response
+#### Response
 Header
 | Sync        | Version | Response| Response length| Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
@@ -30,8 +32,8 @@ Subpacket 1
 |  00 1c |   00 01   |00 01 00 45| 6 x 00 | 00 0c  | e4 07 | 05 00 | 0e 00 | 6 x XX  |
 |        | CNC=1/PMC=2 |           |        | 12     | 2020  | 5     | 14    |         |
 
-## GETTIMEDATE Time 12:15:05
-### Request
+### GETTIMEDATE Time 12:15:05
+#### Request
 Header
 | Sync        | Version | Request | Request length | Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
@@ -43,7 +45,7 @@ Subpacket 1 (length=length+2)
 |  00 1c |   00 01   |00 01 00 45| 00 00 00 01 |00 00 00 00|00 00 00 00|00 00 00 00|00 00 00 00|
 |        | CNC=1/PMC=2 |           | DATE=0/TIME=1 |           |           |           |           |
 
-### Response
+#### Response
 Header
 | Sync        | Version | Response| Response length| Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
@@ -56,8 +58,8 @@ Subpacket 1
 |        | CNC=1/PMC=2 |           |        | 12     |         | 12  | 15     | 5   | 
 
 
-## GETDIAG 980-981 for first Axis
-### Request
+### GETDIAG 980-981 for first Axis
+#### Request
 Header
 | Sync        | Version | Request | Request length | Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
@@ -69,7 +71,7 @@ Subpacket 1
 |  00 1c |   00 01   |00 01 00 30| 00 00 03 d4 |00 00 03 d5|00 00 00 01|00 00 00 00|00 00 00 00|
 |        | CNC=1/PMC=2 |           | 980         | 981       | Axis 1    |           |           |
 
-### Response
+#### Response
 Header
 | Sync        | Version |Response |Response length | Subpacket count | 
 |:-----------:|:-------:|:-------:|:-------:|:---------:|
