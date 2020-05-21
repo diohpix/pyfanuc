@@ -5,6 +5,9 @@ The python-source is based on protocol analysis.
 The problem is, that the Fanuc Focas Library does not have proper linux support.
 The current target platform for protocol-analysis is an EDM-machine with a 160 control and a Robodrill 30i.
 
+## Programmtransfer
+Programmfiletransfer needs an another connection parameter
+
 ## Protocol samples
 
 ### GETTIMEDATE Date 14.05.2020
