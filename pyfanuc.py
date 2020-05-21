@@ -5,31 +5,26 @@
 import socket,time
 from struct import pack,unpack
 
-class pyfanuc():
+class pyfanuc(object):
 	def __init__(self, ip, port=8193):
 		self.sock=None
 		self.ip=ip
 		self.port=port
 		self.connected=False
-		self.FTYPE_OPN_REQU=0x0101;self.FTYPE_OPN_RESP=0x0102
-		self.FTYPE_VAR_REQU=0x2101;self.FTYPE_VAR_RESP=0x2102
-		self.FTYPE_CLS_REQU=0x0201;self.FTYPE_CLS_RESP=0x0202
-		self.FRAME_SRC=b'\x00\x01'
-		self.FRAME_DST=b'\x00\x02'
-		self.FRAMEHEAD=b'\xa0\xa0\xa0\xa0'
-		self.ABS=1
-		self.REL=2
-		self.REF=4
-		self.SKIP=8
-		self.ALLAXIS=-1
+	FTYPE_OPN_REQU=0x0101;FTYPE_OPN_RESP=0x0102
+	FTYPE_VAR_REQU=0x2101;FTYPE_VAR_RESP=0x2102
+	FTYPE_CLS_REQU=0x0201;FTYPE_CLS_RESP=0x0202
+	FRAME_SRC=b'\x00\x01'
+	FRAME_DST=b'\x00\x02';FRAME_DST2=b'\x00\x01'
+	FRAMEHEAD=b'\xa0\xa0\xa0\xa0'
 	def connect(self):
 #		try:
 		self.sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.sock.connect((self.ip,self.port))
 		self.sock.settimeout(1)
-		self.sock.sendall(self.encap(self.FTYPE_OPN_REQU,self.FRAME_DST))
+		self.sock.sendall(self.encap(pyfanuc.FTYPE_OPN_REQU,pyfanuc.FRAME_DST))
 		data=self.decap(self.sock.recv(1500))
-		if data["ftype"]==self.FTYPE_OPN_RESP:
+		if data["ftype"]==pyfanuc.FTYPE_OPN_RESP:
 			self.connected=True
 		self.getsysinfo()
 #		except:
@@ -39,13 +34,13 @@ class pyfanuc():
 		return self.connected
 	def disconnect(self):
 		if self.connected:
-			self.sock.sendall(self.encap(self.FTYPE_CLS_REQU,b''))
+			self.sock.sendall(self.encap(pyfanuc.FTYPE_CLS_REQU,b''))
 			data=self.decap(self.sock.recv(1500))
-			if data["ftype"]==self.FTYPE_CLS_RESP:
+			if data["ftype"]==pyfanuc.FTYPE_CLS_RESP:
 				return True
 		return False
 	def encap(self,ftype,payload,fvers=1):
-		if ftype==self.FTYPE_VAR_REQU:
+		if ftype==pyfanuc.FTYPE_VAR_REQU:
 			pre=[]
 			if isinstance(payload,list):
 				for t in payload:
@@ -53,7 +48,7 @@ class pyfanuc():
 				payload=pack(">H",len(pre))+b''.join(pre)
 			else:
 				payload=pack(">HH",1,len(payload)+2)+payload
-		return self.FRAMEHEAD+pack(">HHH",fvers,ftype,len(payload))+payload
+		return pyfanuc.FRAMEHEAD+pack(">HHH",fvers,ftype,len(payload))+payload
 	def decap(self,data):
 		if len(data)<10:
 			return {"len":-1}
@@ -65,11 +60,10 @@ class pyfanuc():
 		if len1==0:
 			return {"len":0,"ftype":ftype,"fvers":fvers,"data":b'0'}
 		data=data[10:]
-		if ftype==self.FTYPE_VAR_RESP:
+		if ftype==pyfanuc.FTYPE_VAR_RESP:
 			re=[]
-			qu=unpack(">H",data[0:2])[0]
 			n=2
-			for t in range(qu):
+			for t in range(unpack(">H",data[0:2])[0]):
 				le=unpack(">H",data[n:n+2])[0]
 				re.append(data[n+2:n+le])
 				n+=le
@@ -78,22 +72,22 @@ class pyfanuc():
 			return {"len":len1,"ftype":ftype,"fvers":fvers,"data":data}
 	def _req_rdsingle(self,c1,c2,c3,v1=0,v2=0,v3=0,v4=0,v5=0):
 		cmd=pack(">HHH",c1,c2,c3)
-		self.sock.sendall(self.encap(self.FTYPE_VAR_REQU,cmd+pack(">iiiii",v1,v2,v3,v4,v5)))
+		self.sock.sendall(self.encap(pyfanuc.FTYPE_VAR_REQU,cmd+pack(">iiiii",v1,v2,v3,v4,v5)))
 		t=self.decap(self.sock.recv(1500))
 		if t["len"]==0:
 			return {"len":-1}
-		elif t["ftype"]!=self.FTYPE_VAR_RESP:
+		elif t["ftype"]!=pyfanuc.FTYPE_VAR_RESP:
 			return {"len":-1}
 		elif t["data"][0].startswith(cmd+b'\x00'*6):
 			return {"len":unpack(">H",t["data"][0][12:14])[0],"data":t["data"][0][14:]}
 		else:
 			return {"len":-1}
 	def _req_rdmulti(self,l):
-		self.sock.sendall(self.encap(self.FTYPE_VAR_REQU,l))
+		self.sock.sendall(self.encap(pyfanuc.FTYPE_VAR_REQU,l))
 		t=self.decap(self.sock.recv(1500))
 		if t["len"]==0:
 			return {"len":-1}
-		elif t["ftype"]!=self.FTYPE_VAR_RESP:
+		elif t["ftype"]!=pyfanuc.FTYPE_VAR_RESP:
 			return {"len":-1}
 		if len(l) != len(t["data"]):
 			return {"len":-1}
@@ -122,9 +116,11 @@ class pyfanuc():
 		return unpack(">HHH",st["data"][0][1][2:8])+unpack(">HHH",st["data"][1][1][-6:])
 	def _req_rdsub(self,c1,c2,c3,v1=0,v2=0,v3=0,v4=0,v5=0):
 		return pack(">HHH",c1,c2,c3)+pack(">iiiii",v1,v2,v3,v4,v5)
+	ABS=1;REL=2;REF=4;SKIP=8
+	ALLAXIS=-1
 	def readaxis(self,what=1,axis=-1):
 		r=[]
-		axvalues=(("ABS",self.ABS,4),("REL",self.REL,6),("REF",self.REF,1),("SKIP",self.SKIP,8))
+		axvalues=(("ABS",pyfanuc.ABS,4),("REL",pyfanuc.REL,6),("REF",pyfanuc.REF,1),("SKIP",pyfanuc.SKIP,8))
 		for u,v,w in axvalues:
 			if what & v:
 				r.append(self._req_rdsub(1,1,0x26,w,axis))
@@ -152,8 +148,7 @@ class pyfanuc():
 	def getsysinfo(self):
 		st=self._req_rdsingle(1,1,0x18)
 		if st["len"]==0x12:
-			self.sysinfo={'cnctype':st["data"][4:6],'mttype':st["data"][6:8],'series':st["data"][8:12],'version':st["data"][12:16],'axes':st["data"][16:]}
-			self.sysinfo['addinfo'],self.sysinfo['maxaxis']=unpack(">HH",st["data"][0:4])
+			self.sysinfo=dict(zip(['addinfo','maxaxis','cnctype','mttype','series','version','axes'],struct.unpack(">2H2s2s4s4s2s",dat)))
 	def readparam(self,axis,first,last=0):
 		if last==0:last=first
 		st=self._req_rdsingle(1,1,0x0e,first,last,axis)
@@ -246,22 +241,80 @@ class pyfanuc():
 		if h==-1:
 			t=time.localtime()
 			h,m,s=t.tm_hour,t.tm_min,t.tm_sec
-		self.sock.sendall(self.encap(self.FTYPE_VAR_REQU,self._req_rdsub(1,1,0x46,1,0,0,0,12)+b'\x00'*6+pack(">HHH",h,m,s)))
+		self.sock.sendall(self.encap(pyfanuc.FTYPE_VAR_REQU,self._req_rdsub(1,1,0x46,1,0,0,0,12)+b'\x00'*6+pack(">HHH",h,m,s)))
 		t=self.decap(self.sock.recv(1500))
 		if t["len"]==18:
-			if t["ftype"]==self.FTYPE_VAR_RESP and unpack(">HHH",t["data"][0][0:6])==(1,1,0x46):
+			if t["ftype"]==pyfanuc.FTYPE_VAR_RESP and unpack(">HHH",t["data"][0][0:6])==(1,1,0x46):
 				return unpack(">h",t["data"][0][6:8])[0]
+	def listprog(self,start=1):
+		ret={}
+		while True:
+			st=self._req_rdsingle(1,1,0x06,start,0x13,2)
+			if st["len"] < -1:
+				return None
+			elif st["len"]==0:
+				return ret
+			for t in range(0,st["len"],72):
+				number,size,comment=unpack(">II64s",st["data"][t:t+72])
+				fnull=comment.find(b'\x00')
+				if fnull>-1:
+					comment=comment[:fnull]
+				start=number+1
+				ret[number]={"size":size,"comment":comment.decode()}
+	def getprog(self,name): #TEST Stream
+		q=b''
+		if isinstance(name,int):
+			q=("O%04i-O%04i" % (name,name)).encode()
+		elif isinstance(name,str):
+			name=name.upper()
+			if not name.startswith("O"):
+				name="O"+name
+			if name.find("-")==-1:
+				name=name+"-"+name
+			q=name.encode()
+		else:
+			return -1
+		buffer=bytearray(0x204)
+		self.sock2=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.sock2.connect((self.ip,self.port))
+		self.sock2.settimeout(1)
+		self.sock2.sendall(self.encap(pyfanuc.FTYPE_OPN_REQU,pyfanuc.FRAME_DST2))
+		data=self.decap(self.sock2.recv(1500))
+		buffer[0:4]=b'\x00\x00\x00\x01'
+		buffer[4:4+len(q)]=q #buffer[4:15]=b'\x4f\x30\x31\x30\x30\x2d\x4f\x30\x31\x30\x30'
+		self.sock2.sendall(self.encap(0x1501,buffer))
+		data=self.decap(self.sock2.recv(1500))
+		f=b''
+		n=b''
+		while True:
+			n+=self.sock2.recv(1500)
+			while len(n)>=10:
+				if n[:4]==pyfanuc.FRAMEHEAD:
+					fvers,ftype,flen=unpack(">HHH",n[4:10])
+					if len(n)<flen:
+						break
+					n=n[10:]
+					if ftype==0x1604: #a0 a0 a0 a0 00 02 16 04 05 00
+						f+=n[:flen]
+						n=n[flen:]
+					elif ftype==0x1701: #a0 a0 a0 a0 00 02 17 01 00 00
+						self.sock2.sendall(self.encap(0x1702,b'')) #a0 a0 a0 a0 00 01 17 02 00 00
+						return f.decode()
+				else:
+					return -1
+		return -1
 
 # D1870 remain-wirelength in m
 # D1874 wirelength complete
 # D2204 conductivity*48
 
 #HOST = '192.168.0.70'
-# conn=pyfanuc('192.168.0.61')
-# if conn.connect():
-	# print("connected")
+conn=pyfanuc('192.168.0.61')
+if conn.connect():
+	print("connected")
+	print(conn.readaxis(conn.ABS | conn.SKIP))
 	# print(conn.settime())
-# if conn.disconnect():print("disconnected")
+if conn.disconnect():print("disconnected")
 
 # conn=pyfanuc('192.168.0.70')
 # if conn.connect():
@@ -269,12 +322,14 @@ class pyfanuc():
 	# print(conn.settime())
 # if conn.disconnect():print("disconnected")
 
-conn=pyfanuc('192.168.0.61')
+conn=pyfanuc('192.168.0.70')
 if conn.connect():
-	print("connected")
-	print(conn.readexecprog())
-	print(conn.readprognum())
+	#print("connected")
+	print(conn.getprog("O100-O101"))
+	#print(conn.listprog(1))
 if conn.disconnect():print("disconnected")
+
+#print(conn.getprog(12))
 
 #	print(conn.sysinfo)
 	# n=conn.readpmc(1,9,2204,1)
@@ -290,12 +345,3 @@ if conn.disconnect():print("disconnected")
 	# n=conn.readmacro(100)
 	# print(n)
 	# print(conn.readaxis(conn.ABS | conn.SKIP))
-
-#[   SYNC  ] [VERSION] [REQUEST] [REQUEST] [SUBPAKETS] [SUBPK1] [CNC1|PMC2] [???] [FUNC ] [                          5 x int32                          ]
-#                                [  LEN  ]             [LEN +2]
-#GETTIME                                                                                 [TIME1/DATE0]
-#A0 A0 A0 A0   00 01     21 01     00 1e      00 01      00 1c      00 01   00 01  00 45  00 00 00 01  00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
-#
-#GETDIAG 980-981 for first Axis
-#                                                                                         [   980   ]  [   981   ]  [  AXIS 1 ]
-#A0 A0 A0 A0   00 01     21 01     00 1e      00 01      00 1c      00 01   00 01  00 30  00 00 03 d4  00 00 03 d5  00 00 00 01  00 00 00 00  00 00 00 00
