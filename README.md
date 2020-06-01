@@ -7,14 +7,6 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 
 I need more generated protocols (wireshark) for another fanuc-machines.
 
-## Programmtransfer
-
-getprog(self,name) ist the test-implementation for programm-transfer.
-
-programtransfer-stream connects with a0 a0 a0 a0 00 01 01 01 00 02 00 01
-
-controltransfer-stream (params etc.) connects with a0 a0 a0 a0 00 01 01 01 00 02 00 02
-
 ## Protocol samples
 
 ### GETTIMEDATE Date 14.05.2020
@@ -105,3 +97,48 @@ Diag-Value 981 [MAX_AXIS=8 Values]
 | 00 00 03 d5 | 00 01 | 00 02     | ff e2 62 6c | 7 x 00 00 00 00 |
 | 981         |  1    |  2-word   | ‭-1.940.884  |                 |
 
+
+## Programmtransfer
+
+getprog(self,name) ist the test-implementation for programm-transfer.
+
+programtransfer-stream connects with a0 a0 a0 a0 00 01 01 01 00 02 00 01
+
+controltransfer-stream (params etc.) connects with a0 a0 a0 a0 00 01 01 01 00 02 00 02
+
+Start Transfer
+| Sync        | Version | Request | Request length | unknown | zeroterm. Prognames |
+|:-----------:|:-------:|:-------:|:-------:|:---------:|:---------:|
+| A0 A0 A0 A0 |  00 01  |  15 01  |  02 04  |   00 00 00 01   | "O2200-O2200" 00 .. |
+
+
+| Sync        | Version | Response| Response length| unknown | 
+|:-----------:|:-------:|:-------:|:-------:|:---------:|
+| A0 A0 A0 A0 |  00 02  |  15 02  |  02 01  |   ..   |
+
+# if not exist
+Receive block
+| Sync        | Version | Response| Response length|
+|:-----------:|:-------:|:-------:|:-------:|
+| A0 A0 A0 A0 |  00 02  |  16 04  |  00 00  |
+
+# if exist
+Receive block
+| Sync        | Version | Response| Response length| Programtext | 
+|:-----------:|:-------:|:-------:|:-------:|:---------:|
+| A0 A0 A0 A0 |  00 02  |  16 04  |  05 00  |   ..   |
+
+Receive block
+| Sync        | Version | Response| Response length| Programtext | 
+|:-----------:|:-------:|:-------:|:-------:|:---------:|
+| A0 A0 A0 A0 |  00 02  |  16 04  |  05 00  |  ... "%" |
+
+Transfer end
+| Sync        | Version | Response| Response length|
+|:-----------:|:-------:|:-------:|:-------:|
+| A0 A0 A0 A0 |  00 02  |  17 01  |  00 00  |
+
+Stop Transfer
+| Sync        | Version | Request | Request length |
+|:-----------:|:-------:|:-------:|:-------:|
+| A0 A0 A0 A0 |  00 01  |  17 02  |  00 00  |
