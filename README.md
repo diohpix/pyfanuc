@@ -8,9 +8,8 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 ## Programmtransfer
 
 getprog(self,name) ist the test-implementation for programm-transfer.
-Programmfiletransfer needs an another connection parameter
-
-
+programtransfer-stream connects with a0 a0 a0 a0 00 01 01 01 00 02 00 01
+controltransfer (params etc.) connectes with a0 a0 a0 a0 00 01 01 01 00 02 00 02
 
 ## Protocol samples
 
