@@ -5,7 +5,7 @@ The python-source is based on protocol analysis.
 The problem is, that the Fanuc Focas Library does not have proper linux support.
 The current target platform for protocol-analysis is an EDM-machine with a 160 control and a Robodrill 30i.
 
-I need more generated protocols (wireshark) for another fanuc-machines.
+"I need more generated protocols (wireshark) for another fanuc-machines."
 
 ## Protocol samples
 
@@ -142,3 +142,8 @@ Stop Transfer
 | Sync        | Version | Request | Request length |
 |:-----------:|:-------:|:-------:|:-------:|
 | A0 A0 A0 A0 |  00 01  |  17 02  |  00 00  |
+
+## sample on raspberry pi 2 only with python3 and without x86-emu/wine etc.
+
+![Test Image](/images/test.png)
+
