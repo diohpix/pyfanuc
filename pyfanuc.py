@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #0.1 pyfanuc init release
 #0.11 extend to multipacket
-
+#0.12 readaxis
 import socket,time
 from struct import pack,unpack
 
@@ -20,6 +20,7 @@ class pyfanuc(object):
 	def connect(self):
 #		try:
 		self.sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.sock.settimeout(5)
 		self.sock.connect((self.ip,self.port))
 		self.sock.settimeout(1)
 		self.sock.sendall(self.encap(pyfanuc.FTYPE_OPN_REQU,pyfanuc.FRAME_DST))
@@ -62,8 +63,9 @@ class pyfanuc(object):
 		data=data[10:]
 		if ftype==pyfanuc.FTYPE_VAR_RESP:
 			re=[]
+			qu=unpack(">H",data[0:2])[0]
 			n=2
-			for t in range(unpack(">H",data[0:2])[0]):
+			for t in range(qu):
 				le=unpack(">H",data[n:n+2])[0]
 				re.append(data[n+2:n+le])
 				n+=le
@@ -115,7 +117,7 @@ class pyfanuc(object):
 			return
 		return unpack(">HHH",st["data"][0][1][2:8])+unpack(">HHH",st["data"][1][1][-6:])
 	def _req_rdsub(self,c1,c2,c3,v1=0,v2=0,v3=0,v4=0,v5=0):
-		return pack(">HHH",c1,c2,c3)+pack(">iiiii",v1,v2,v3,v4,v5)
+		return pack(">HHHiiiii",c1,c2,c3,v1,v2,v3,v4,v5)
 	ABS=1;REL=2;REF=4;SKIP=8
 	ALLAXIS=-1
 	def readaxis(self,what=1,axis=-1):
@@ -133,22 +135,23 @@ class pyfanuc(object):
 			for pos in range(2,unpack(">H",x[1][0:2])[0]+2,8):
 				value=x[1][pos:pos+8]
 				ret1.append(self._decode8(value))
-			ty=unpack(">H",x[0][4:])[0]
 			for u,v,w in axvalues:
 				if what & v:
 					r[u]=ret1
 					what &= ~v
+					break
 		return r
 	def _decode8(self,val):
 		if val[5]==2 or val[5]==10:
-			if val[-2:]==b'\xff\xff':
+			if val[-2:]==b'\xff'*2:
 				return None
 			else:
 				return unpack(">i",val[0:4])[0]/val[5]**val[7]
 	def getsysinfo(self):
 		st=self._req_rdsingle(1,1,0x18)
 		if st["len"]==0x12:
-			self.sysinfo=dict(zip(['addinfo','maxaxis','cnctype','mttype','series','version','axes'],struct.unpack(">2H2s2s4s4s2s",dat)))
+			self.sysinfo=dict(zip(['addinfo','maxaxis','cnctype','mttype','series','version','axes'],
+			unpack(">HH2s2s4s4s2s",st["data"])))
 	def readparam(self,axis,first,last=0):
 		if last==0:last=first
 		st=self._req_rdsingle(1,1,0x0e,first,last,axis)
@@ -256,11 +259,11 @@ class pyfanuc(object):
 				return ret
 			for t in range(0,st["len"],72):
 				number,size,comment=unpack(">II64s",st["data"][t:t+72])
-				fnull=comment.find(b'\x00')
-				if fnull>-1:
-					comment=comment[:fnull]
+				comment=comment.split(b'\0', 1)[0]
 				start=number+1
 				ret[number]={"size":size,"comment":comment.decode()}
+	def readalarm(self):
+		pass
 	def getprog(self,name): #TEST Stream
 		q=b''
 		if isinstance(name,int):
@@ -284,6 +287,7 @@ class pyfanuc(object):
 		buffer[4:4+len(q)]=q #buffer[4:15]=b'\x4f\x30\x31\x30\x30\x2d\x4f\x30\x31\x30\x30'
 		self.sock2.sendall(self.encap(0x1501,buffer))
 		data=self.decap(self.sock2.recv(1500))
+		#print(data)
 		f=b''
 		n=b''
 		while True:
@@ -309,25 +313,35 @@ class pyfanuc(object):
 # D2204 conductivity*48
 
 #HOST = '192.168.0.70'
-conn=pyfanuc('192.168.0.61')
-if conn.connect():
-	print("connected")
-	print(conn.readaxis(conn.ABS | conn.SKIP))
+# conn=pyfanuc('192.168.0.61')
+# if conn.connect():
+	# print("connected")
+	# print(conn.sysinfo)
+	# print(conn.readaxis(conn.ABS | conn.SKIP))
 	# print(conn.settime())
-if conn.disconnect():print("disconnected")
+# if conn.disconnect():
+	# print("disconnected")
 
 # conn=pyfanuc('192.168.0.70')
 # if conn.connect():
 	# print("connected")
 	# print(conn.settime())
 # if conn.disconnect():print("disconnected")
-
-conn=pyfanuc('192.168.0.70')
-if conn.connect():
-	#print("connected")
-	print(conn.getprog("O100-O101"))
-	#print(conn.listprog(1))
-if conn.disconnect():print("disconnected")
+if __name__ == '__main__':
+	conn=pyfanuc('192.168.0.61')
+	if conn.connect():
+		print("connected")
+		n=conn.readexecprog()
+		print(n)
+		n=conn.readpmc(1,9,2204,1)
+		if n is not None:
+			print("Leitwert %0.1f" % (n[2204]/48))
+		n=conn.readpmc(2,9,1870,2)
+		if n is not None:
+			print("Laenge: %i von %i (%0.1f %%)" % (n[1870],n[1874],n[1870]/n[1874]*100))
+		print(conn.listprog())
+	if conn.disconnect():
+		print("disconnected")
 
 #print(conn.getprog(12))
 
