@@ -15,3 +15,5 @@ if conn.connect():
 	print("Lese Achsen")
 	for key,val in conn.readaxis(conn.ABS | conn.SKIP | conn.REL | conn.REF).items():
 		print(key,val)
+	print("Lese Programm O5555")
+	print(conn.getprog("O5555"))
