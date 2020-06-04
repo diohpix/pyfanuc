@@ -2,6 +2,7 @@
 #0.1 pyfanuc init release
 #0.11 extend to multipacket
 #0.12 readaxis
+#0.13 directory-access for 30i
 import socket,time
 from struct import pack,unpack
 
@@ -72,9 +73,9 @@ class pyfanuc(object):
 			return {"len":len1,"ftype":ftype,"fvers":fvers,"data":re}
 		else: # ftype==FTYPE_OPN_RESP or ftype==FTYPE_CLS_RESP
 			return {"len":len1,"ftype":ftype,"fvers":fvers,"data":data}
-	def _req_rdsingle(self,c1,c2,c3,v1=0,v2=0,v3=0,v4=0,v5=0):
+	def _req_rdsingle(self,c1,c2,c3,v1=0,v2=0,v3=0,v4=0,v5=0,pl=b""):
 		cmd=pack(">HHH",c1,c2,c3)
-		self.sock.sendall(self.encap(pyfanuc.FTYPE_VAR_REQU,cmd+pack(">iiiii",v1,v2,v3,v4,v5)))
+		self.sock.sendall(self.encap(pyfanuc.FTYPE_VAR_REQU,cmd+pack(">iiiii",v1,v2,v3,v4,v5)+pl))
 		t=self.decap(self.sock.recv(1500))
 		if t["len"]==0:
 			return {"len":-1}
@@ -264,6 +265,23 @@ class pyfanuc(object):
 				ret[number]={"size":size,"comment":comment.decode()}
 	def readalarm(self):
 		pass
+	def readdir_current(self,fgbg=1): #30i
+		st=self._req_rdsingle(1,1,0xb0,fgbg)
+		if st["len"]>=0:
+			p=st["data"].split(b'\0', 1)[0]
+			return p.decode()
+		return None
+	def readdir_info(self,dir): #30i
+		buffer=bytearray(0x100)
+		bdir=dir.encode()
+		buffer[0:len(bdir)]=bdir
+		st=self._req_rdsingle(1,1,0xb4,0,0,0,0,256,buffer)
+		if st["len"]>=8:
+			return dict(zip(['dirs','files'],unpack(">ii",st["data"])))
+		return None
+	def readdir(self,dir): #30i
+		pass
+
 	def getprog(self,name): #TEST Stream
 		q=b''
 		if isinstance(name,int):
@@ -328,18 +346,11 @@ class pyfanuc(object):
 	# print(conn.settime())
 # if conn.disconnect():print("disconnected")
 if __name__ == '__main__':
-	conn=pyfanuc('192.168.0.61')
+	conn=pyfanuc('192.168.0.70')
 	if conn.connect():
 		print("connected")
-		n=conn.readexecprog()
-		print(n)
-		n=conn.readpmc(1,9,2204,1)
-		if n is not None:
-			print("Leitwert %0.1f" % (n[2204]/48))
-		n=conn.readpmc(2,9,1870,2)
-		if n is not None:
-			print("Laenge: %i von %i (%0.1f %%)" % (n[1870],n[1874],n[1870]/n[1874]*100))
-		print(conn.listprog())
+		print(conn.readdir_current())
+		print(conn.readdir_info("//CNC_MEM/USER/PATH3"))
 	if conn.disconnect():
 		print("disconnected")
 
