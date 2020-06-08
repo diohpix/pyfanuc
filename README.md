@@ -8,7 +8,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 "I need more generated protocols (wireshark) for another fanuc-machines."
 
 ## implemented
-
+|:------:|:---------:|
 |getsysinfo|Read Sysinfos|
 |readparam | Read Parameter(s)|
 |readdiag | Read Diagnostic-Value(s)|
@@ -22,6 +22,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 |readactfeed | actual feedrate|
 
 >30i
+|:------:|:---------:|
 |readdir_current | current dir|
 |readdir_info	| Directory-Info|
 |readdir | Read Dir (one block)|
