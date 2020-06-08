@@ -10,25 +10,26 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 ## implemented
 |function|description|
 |:------|:---------|
-|getsysinfo|Read Sysinfos|
-|readparam | Read Parameter(s)|
-|readdiag | Read Diagnostic-Value(s)|
-|readmacro | Read Macro-Value(s)|
-|readpmc | Read PMC-Variables|
-|readexecprog	| execute linecode|
-|readprognum | actual main/run program|
-|settime | set date/time|
-|listprog	| listprograms|
-|getprog | program rest test|
-|readactfeed | actual feedrate|
+| getsysinfo | Read Sysinfos |
+| readparam | Read Parameter(s) |
+| readdiag | Read Diagnostic-value(s) |
+| readmacro | Read Macro-value(s) |
+| readpmc | Read PMC-variables |
+| readexecprog	| execute linecode |
+| readprognum | actual main/run program |
+| settime | set date/time |
+| listprog	| listprograms |
+| getprog | program rest test |
+| readactfeed | actual feedrate |
+| readaxis | actual axis-values |
 
 ### control > 30i
 |function|description|
 |:------|:---------|
-|readdir_current | current dir|
-|readdir_info	| Directory-Info|
-|readdir | Read Dir (one block)|
-|readdir_complete	| read complete Dir|
+| readdir_current | current dir |
+| readdir_info	| Directory-Info |
+| readdir | Read Dir (one block) |
+| readdir_complete	| read complete Dir |
 
 ### subfunctions
 |function|description|
@@ -37,8 +38,10 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 | disconnect | Disconecting  |
 | _req_rdsingle | capsulate single packet request |
 | _req_rdmulti |  capsulate single packets request |
+| _req_rdsub | sub-packet-pack |
 | encap | encapsulate packets |
 | decap | decapsulate packets |
+| _decode8 | decode 8 byte values |
 
 ## Protocol samples
 
