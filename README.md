@@ -22,6 +22,9 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 | getprog | program rest test |
 | readactfeed | actual feedrate |
 | readaxis | actual axis-values |
+| getdate | read date |
+| gettime | read time |
+| getdatetime | read date+time |
 
 ### control > 30i
 |function|description|
