@@ -26,7 +26,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 | gettime | read time |
 | getdatetime | read date+time |
 
-### control > 30i
+### control >= 30i
 |function|description|
 |:------|:---------|
 | readdir_current | current dir |
