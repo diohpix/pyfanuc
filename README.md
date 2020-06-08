@@ -22,7 +22,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 |getprog | program rest test|
 |readactfeed | actual feedrate|
 
-###30i
+### control > 30i
 |function|description|
 |:------|:---------|
 |readdir_current | current dir|
