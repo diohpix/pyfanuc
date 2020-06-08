@@ -2,8 +2,7 @@
 #0.1 pyfanuc init release
 #0.11 extend to multipacket
 #0.12 readaxis
-#0.13 directory-access for 30i
-import socket,time
+import socket,time,datetime
 from struct import pack,unpack
 
 class pyfanuc(object):
@@ -83,6 +82,8 @@ class pyfanuc(object):
 			return {"len":-1}
 		elif t["data"][0].startswith(cmd+b'\x00'*6):
 			return {"len":unpack(">H",t["data"][0][12:14])[0],"data":t["data"][0][14:]}
+		elif t["data"][0].startswith(cmd):
+			return {"len":-1,"data":t["data"][0][6:]}
 		else:
 			return {"len":-1}
 	def _req_rdmulti(self,l):
@@ -265,13 +266,13 @@ class pyfanuc(object):
 				ret[number]={"size":size,"comment":comment.decode()}
 	def readalarm(self):
 		pass
-	def readdir_current(self,fgbg=1): #30i
+	def readdir_current(self,fgbg=1): #31i
 		st=self._req_rdsingle(1,1,0xb0,fgbg)
 		if st["len"]>=0:
 			p=st["data"].split(b'\0', 1)[0]
 			return p.decode()
 		return None
-	def readdir_info(self,dir): #30i
+	def readdir_info(self,dir): #31i
 		buffer=bytearray(0x100)
 		bdir=dir.encode()
 		buffer[0:len(bdir)]=bdir
@@ -279,9 +280,39 @@ class pyfanuc(object):
 		if st["len"]>=8:
 			return dict(zip(['dirs','files'],unpack(">ii",st["data"])))
 		return None
-	def readdir(self,dir): #30i
-		pass
-
+	def readdir(self,dir,first=0,count=10,type=0,size=1): #30i
+		buffer=bytearray(0x100)
+		bdir=dir.encode()
+		buffer[0:len(bdir)]=bdir
+		st=self._req_rdsingle(1,1,0xb3,first,count,type,size,256,buffer)
+		x=[]
+		if st["len"]>=8:
+			for t in range(0,st["len"],128):
+				n=dict(zip(['type','datetime','unkn','size','attr','name','comment','proctimestamp'],unpack(">h12s6sII36s52s12s",st["data"][t:t+128])))
+				del n['unkn']
+				if n['type']==1:
+					n['comment']=n['comment'].split(b'\0', 1)[0].decode()
+					n['datetime']=datetime.datetime(*unpack(">HHHHHH",n['datetime'])).timetuple()
+				else:
+					n['comment']=None
+					n['size']=None
+					n['datetime']=None
+				n['name']=n['name'].split(b'\0', 1)[0].decode()
+				n['type']='D' if n['type']==0 else 'F'
+				x.append(n)
+			return(x)
+		return None
+	def readdir_complete(self,dir): #30i
+		t=self.readdir_info(dir)
+		n=t['dirs']+t['files']
+		ret=[]
+		for t in range(0,n,10):
+			x=self.readdir(dir,first=t,count=10)
+			if not x is None:
+				ret.extend(x)
+			else:
+				break
+		return ret
 	def getprog(self,name): #TEST Stream
 		q=b''
 		if isinstance(name,int):
@@ -326,47 +357,33 @@ class pyfanuc(object):
 					return -1
 		return -1
 
+	def readactfeed(self):
+		st=self._req_rdsingle(1,1,0x24)
+		if st['len']==8:
+			return self._decode8(st['data'])
+
 # D1870 remain-wirelength in m
 # D1874 wirelength complete
 # D2204 conductivity*48
 
-#HOST = '192.168.0.70'
-# conn=pyfanuc('192.168.0.61')
-# if conn.connect():
-	# print("connected")
-	# print(conn.sysinfo)
-	# print(conn.readaxis(conn.ABS | conn.SKIP))
-	# print(conn.settime())
-# if conn.disconnect():
-	# print("disconnected")
-
-# conn=pyfanuc('192.168.0.70')
-# if conn.connect():
-	# print("connected")
-	# print(conn.settime())
-# if conn.disconnect():print("disconnected")
+import locale
+locale.setlocale(locale.LC_ALL, 'deu_deu')
 if __name__ == '__main__':
 	conn=pyfanuc('192.168.0.70')
 	if conn.connect():
 		print("connected")
-		print(conn.readdir_current())
-		print(conn.readdir_info("//CNC_MEM/USER/PATH3"))
+		#print(conn.readdir_current())
+#		for n in conn.readdir_complete("//CNC_MEM/USER/PATH1/"):
+#			print(n['name']+" ("+time.strftime("%c",n['datetime'])+')' if n['type']=='F' else '<'+n['name']+'>')
+		print(conn.sysinfo)
+		print(conn.readactfeed())
 	if conn.disconnect():
 		print("disconnected")
 
-#print(conn.getprog(12))
-
-#	print(conn.sysinfo)
-	# n=conn.readpmc(1,9,2204,1)
-	# if n is not None:
-		# print("Leitwert %0.1f" % (n[2204]/48))
-	# n=conn.readpmc(2,9,1870,2)
-	# if n is not None:
-		# print("Laenge: %i von %i (%0.1f %%)" % (n[1870],n[1874],n[1870]/n[1874]*100))
-#	n=conn.readdiag(-1,980)
-#	print(n)
-	# n=conn.readparam(-1,1242,1243)
-	# print(n)
-	# n=conn.readmacro(100)
-	# print(n)
-	# print(conn.readaxis(conn.ABS | conn.SKIP))
+	conn=pyfanuc('192.168.0.61')
+	if conn.connect():
+		print("connected")
+		print(conn.sysinfo)
+		print(conn.readactfeed())
+	if conn.disconnect():
+		print("disconnected")
