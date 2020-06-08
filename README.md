@@ -7,6 +7,26 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 
 "I need more generated protocols (wireshark) for another fanuc-machines."
 
+## implemented
+
+|getsysinfo|Read Sysinfos|
+|readparam | Read Parameter(s)|
+|readdiag | Read Diagnostic-Value(s)|
+|readmacro | Read Macro-Value(s)|
+|readpmc | Read PMC-Variables|
+|readexecprog	| execute linecode|
+|readprognum | actual main/run program|
+|settime | set date/time|
+|listprog	| listprograms|
+|getprog | program rest test|
+|readactfeed | actual feedrate|
+
+>30i
+|readdir_current | current dir|
+|readdir_info	| Directory-Info|
+|readdir | Read Dir (one block)|
+|readdir_complete	| read complete Dir|
+
 ## Protocol samples
 
 ### GETTIMEDATE Date 14.05.2020
