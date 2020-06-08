@@ -9,7 +9,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 
 ## implemented
 |function|description|
-|:------:|:---------:|
+|:------|:---------|
 |getsysinfo|Read Sysinfos|
 |readparam | Read Parameter(s)|
 |readdiag | Read Diagnostic-Value(s)|
@@ -22,9 +22,9 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 |getprog | program rest test|
 |readactfeed | actual feedrate|
 
->30i
+###30i
 |function|description|
-|:------:|:---------:|
+|:------|:---------|
 |readdir_current | current dir|
 |readdir_info	| Directory-Info|
 |readdir | Read Dir (one block)|
