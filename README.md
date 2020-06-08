@@ -30,6 +30,16 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 |readdir | Read Dir (one block)|
 |readdir_complete	| read complete Dir|
 
+### subfunctions
+|function|description|
+|:------|:---------|
+| connect | Connecting |
+| disconnect | Disconecting  |
+| _req_rdsingle | capsulate single packet request |
+| _req_rdmulti |  capsulate single packets request |
+| encap | encapsulate packets |
+| decap | decapsulate packets |
+
 ## Protocol samples
 
 ### GETTIMEDATE Date 14.05.2020
