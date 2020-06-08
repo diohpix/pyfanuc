@@ -10,11 +10,11 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 ## implemented
 |function|description|
 |:------|:---------|
-| getsysinfo | Read Sysinfos |
-| readparam | Read Parameter(s) |
-| readdiag | Read Diagnostic-value(s) |
-| readmacro | Read Macro-value(s) |
-| readpmc | Read PMC-variables |
+| getsysinfo | read sysinfos |
+| readparam | read parameter(s) |
+| readdiag | read diagnostic-value(s) |
+| readmacro | read macro-value(s) |
+| readpmc | read pmc-variables |
 | readexecprog	| execute linecode |
 | readprognum | actual main/run program |
 | settime | set date/time |
@@ -29,16 +29,16 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 ### control >= 30i
 |function|description|
 |:------|:---------|
-| readdir_current | current dir |
-| readdir_info	| Directory-Info |
-| readdir | Read Dir (one block) |
-| readdir_complete	| read complete Dir |
+| readdir_current | current directory |
+| readdir_info	| directory-info |
+| readdir | read directory (one block) |
+| readdir_complete	| read complete directory |
 
 ### subfunctions
 |function|description|
 |:------|:---------|
-| connect | Connecting |
-| disconnect | Disconecting  |
+| connect | connecting |
+| disconnect | disconnecting  |
 | _req_rdsingle | capsulate single packet request |
 | _req_rdmulti |  capsulate single packets request |
 | _req_rdsub | sub-packet-pack |
