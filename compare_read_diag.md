@@ -1,6 +1,7 @@
-compare read diag on 160i-W and 31i
+# compare read diag on 160i-W and 31i
 
-read diag value 160i-W
+## read diag value 160i-W
+
 request:
 <pre>
 a0 a0 a0 a0 00 01 21 01
@@ -32,7 +33,8 @@ a0 a0 a0 a0 00 02 21 02
 						00 00 00 00 [fill]
 						00 00 00 00 [fill up to MAX_AXIS (8)]
 </pre>
-read diag value 30i
+## read diag value 30i
+
 request:
 <pre>
 a0 a0 a0 a0 00 01 21 01
