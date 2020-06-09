@@ -3,6 +3,7 @@
 ## read diag value 160i-W
 request:
 a0 a0 a0 a0 00 01 21 01
+
 	00 1e [length]
 		00 01 [1 subpacket]
 			00 1c [length subpacket 1]
@@ -12,8 +13,10 @@ a0 a0 a0 a0 00 01 21 01
 				00 00 00 01 [Argument 3 first axis]
 				00 00 00 00 [Argument 4]
 				00 00 00 00 [Argument 5]
+
 response:
 a0 a0 a0 a0 00 02 21 02
+
 	00 3a [length]
 		00 01 [1 subpacket]
 			00 38 [length subpacket 1]
@@ -32,6 +35,7 @@ a0 a0 a0 a0 00 02 21 02
 ## read diag value 31i
 request:
 a0 a0 a0 a0 00 01 21 01
+
 	00 1e [length]
 		00 01 [1 subpacket]
 			00 1c [length subpacket 1]
@@ -43,6 +47,7 @@ a0 a0 a0 a0 00 01 21 01
 				00 00 00 00 [Argument 5]
 response:
 a0 a0 a0 a0 00 04 21 02
+
 	02 22 [length]
 		00 01 [1 subpacket]
 			02 20 [length subpacket 1]
