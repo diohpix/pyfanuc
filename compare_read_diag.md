@@ -1,9 +1,9 @@
-# compare read diag on 160i-W and 31i
+compare read diag on 160i-W and 31i
 
-## read diag value 160i-W
+read diag value 160i-W
 request:
+<pre>
 a0 a0 a0 a0 00 01 21 01
-
 	00 1e [length]
 		00 01 [1 subpacket]
 			00 1c [length subpacket 1]
@@ -13,10 +13,10 @@ a0 a0 a0 a0 00 01 21 01
 				00 00 00 01 [Argument 3 first axis]
 				00 00 00 00 [Argument 4]
 				00 00 00 00 [Argument 5]
-
+</pre>
 response:
+<pre>
 a0 a0 a0 a0 00 02 21 02
-
 	00 3a [length]
 		00 01 [1 subpacket]
 			00 38 [length subpacket 1]
@@ -31,11 +31,11 @@ a0 a0 a0 a0 00 02 21 02
 						00 00 00 00 [fill]
 						00 00 00 00 [fill]
 						00 00 00 00 [fill up to MAX_AXIS (8)]
-
-## read diag value 31i
+</pre>
+read diag value 30i
 request:
+<pre>
 a0 a0 a0 a0 00 01 21 01
-
 	00 1e [length]
 		00 01 [1 subpacket]
 			00 1c [length subpacket 1]
@@ -45,9 +45,10 @@ a0 a0 a0 a0 00 01 21 01
 				ff ff ff ff [Argument 3 all axes -1]
 				00 00 00 00 [Argument 4]
 				00 00 00 00 [Argument 5]
+</pre>
 response:
+<pre>
 a0 a0 a0 a0 00 04 21 02
-
 	02 22 [length]
 		00 01 [1 subpacket]
 			02 20 [length subpacket 1]
@@ -119,3 +120,4 @@ a0 a0 a0 a0 00 04 21 02
 							00 00 00 00 00 0a 00 00 [fill]
 							00 00 00 00 00 0a 00 00 [fill]
 							00 00 00 00 00 0a 00 00 [fill up to MAX_AXIS (32)]
+</pre>
