@@ -33,7 +33,7 @@ a0 a0 a0 a0 00 02 21 02
 						00 00 00 00 [fill]
 						00 00 00 00 [fill up to MAX_AXIS (8)]
 </pre>
-## read diag value 30i
+## read diag value 31i
 
 request:
 <pre>
