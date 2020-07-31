@@ -61,6 +61,20 @@ Subpacket 1 (length=length+2)
 |  00 1c |   00 02   |00 01 80 01| 00 00 08 9c |00 00 08 9d|00 00 00 09|00 00 00 01|00 00 00 00|
 |        | CNC=1/PMC=2 |           | 2204 | 2205 | Data Table | Type short |           |
 
+Memory Typ
+| Typ | | Description |
+|:-----------:|:-------:|:-------:|
+| 0 | G | uplink PMC to CNC |
+| 1 | F | downlink PMC from CNC |
+| 2 | Y | dplink PMC to Machine |
+| 3 | X | downlink PMC from Machine |
+| 4 | A | message |
+| 5 | R | internal Relays |
+| 6 | T | Timer |
+| 7 | K | Keep relays |
+| 8 | C | Counter |
+| 9 | D | Data |
+
 #### Response
 Header
 | Sync        | Version | Response| Response length| Subpacket count | 
