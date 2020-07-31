@@ -63,7 +63,7 @@ Subpacket 1 (length=length+2)
 
 Memory Typ
 | Typ | | Description |
-|:-----------:|:-------:|:-------:|
+|:-----------:|:-------:|:-------|
 | 0 | G | uplink PMC to CNC |
 | 1 | F | downlink PMC from CNC |
 | 2 | Y | dplink PMC to Machine |
