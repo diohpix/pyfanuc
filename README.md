@@ -48,6 +48,31 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 
 ## Protocol samples
 
+### GETPMC VALUE D2204
+#### Request
+Header
+| Sync        | Version | Request | Request length | Subpacket count | 
+|:-----------:|:-------:|:-------:|:-------:|:---------:|
+| A0 A0 A0 A0 |  00 01  |  21 01  |  00 1e  |   00 01   |
+
+Subpacket 1 (length=length+2)
+| Length | CNC/PMC   | Func      | int32       | int32     | int32     | int32     | int32     |
+|:------:|:---------:|:---------:|:-----------:|:---------:|:---------:|:---------:|:---------:|
+|  00 1c |   00 02   |00 01 80 01| 00 00 08 9c |00 00 08 9d|00 00 00 09|00 00 00 01|00 00 00 00|
+|        | CNC=1/PMC=2 |           | 2204 | 2205 | Data Table | Type short |           |
+
+#### Response
+Header
+| Sync        | Version | Response| Response length| Subpacket count | 
+|:-----------:|:-------:|:-------:|:-------:|:---------:|
+| A0 A0 A0 A0 |  00 02  |  21 02  |  00 14  |   00 01   |
+
+Subpacket 1
+| Length | CNC/PMC | Func      | fill   | Length payload | int16 |
+|:------:|:---------:|:---------:|:------:|:------:|:-----:|
+|  00 12 |   00 02   |00 01 80 01| 6 x 00 | 00 02 | 02 58 |
+|        | CNC=1/PMC=2 |           |        | 2 | 600  |
+
 ### GETTIMEDATE Date 14.05.2020
 #### Request
 Header
