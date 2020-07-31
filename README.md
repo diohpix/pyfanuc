@@ -66,7 +66,7 @@ Memory Typ
 |:-----------:|:-------:|:-------|
 | 0 | G | uplink PMC to CNC |
 | 1 | F | downlink PMC from CNC |
-| 2 | Y | dplink PMC to Machine |
+| 2 | Y | uplink PMC to Machine |
 | 3 | X | downlink PMC from Machine |
 | 4 | A | message |
 | 5 | R | internal Relays |
