@@ -59,9 +59,16 @@ Subpacket 1 (length=length+2)
 | Length | CNC/PMC   | Func      | int32       | int32     | int32     | int32     | int32     |
 |:------:|:---------:|:---------:|:-----------:|:---------:|:---------:|:---------:|:---------:|
 |  00 1c |   00 02   |00 01 80 01| 00 00 08 9c |00 00 08 9d|00 00 00 09|00 00 00 01|00 00 00 00|
-|        | CNC=1/PMC=2 |           | 2204 | 2205 | Data Table | Type short |           |
+|        | CNC=1/PMC=2 |           | 2204 | 2205 | Memory Type (D) | Type (short) |           |
 
-Memory Typ
+Data Type
+| Typ | Description |
+|:-----------:|:-------|
+| 0 | byte |
+| 1 | short |
+| 2 | int32 |
+
+Memory Type
 | Typ | | Description |
 |:-----------:|:-------:|:-------|
 | 0 | G | uplink PMC to CNC |
