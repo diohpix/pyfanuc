@@ -39,5 +39,6 @@
 01,01,b0 cnc_rdpdf_curdir
 01,01,b3 cnc_rdpdf_alldir
 01,01,b4 cnc_rdpdf_subdirn
+01,01,b9 cnc_pdf_rdmain
 
 02,01,8001 read PMC
