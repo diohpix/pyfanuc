@@ -417,7 +417,13 @@ class pyfanuc(object):
 		"""
 		st=self._req_rdsingle(1,1,0x24)
 		return self._decode8(st['data']) if st['len']==8 else None
-
+	def readactspindlespeed(self):
+		"""
+		Get actual spindlespeed
+		returns spindlespeed
+		"""
+		st=self._req_rdsingle(1,1,0x25)
+		return self._decode8(st['data']) if st['len']==8 else None
 
 # D1870 remain-wirelength in m
 # D1874 wirelength complete
