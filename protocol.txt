@@ -22,7 +22,7 @@
 01,01,46 set time/date
 01,01,56 servo load MAX_AXIS
 
-01,01,61 cnc_rdopnlgsname
+01,01,61 read signal names operator panel
 
 01,01,88 ??
 01,01,89 axis names
