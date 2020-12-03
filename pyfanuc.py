@@ -121,7 +121,14 @@ class pyfanuc(object):
 				return None
 			else:
 				return unpack(">i",val[0:4])[0]/val[5]**val[7]
-
+	def statinfo(self):
+		"""
+		Get state of machine
+		"""
+		st=self._req_rdsingle(1,1,0x19,0)
+		if self.sysinfo["cnctype"]=="31" and st["len"]==0xe:
+			return dict(zip(['aut','run','motion','mstb','emegency','alarm','edit'],
+			unpack(">HHHHHHH",st["data"])))
 	def getdate(self):
 		"""
 		Get date
