@@ -126,7 +126,7 @@ class pyfanuc(object):
 		Get state of machine
 		"""
 		st=self._req_rdsingle(1,1,0x19,0)
-		if self.sysinfo["cnctype"]=="31" and st["len"]==0xe:
+		if (self.sysinfo["cnctype"]==b"16" or self.sysinfo["cnctype"]==b"31") and st["len"]==0xe:
 			return dict(zip(['aut','run','motion','mstb','emegency','alarm','edit'],
 			unpack(">HHHHHHH",st["data"])))
 	def getdate(self):
