@@ -289,9 +289,8 @@ class pyfanuc(object):
 		return {"run":unpack(">i",st["data"][0:4])[0],"main":unpack(">i",st["data"][4:])[0]}
 	def readprogname(self): #31i
 		"""
-		Get current directory
-		requests 1 (default) for foreground or 2 for background
-		returns directoryname
+		Get current mainprogname
+		returns name with path
 		"""
 		st=self._req_rdsingle(1,1,0xb9)
 		if st["len"]>=0:
