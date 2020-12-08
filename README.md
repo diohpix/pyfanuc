@@ -230,7 +230,7 @@ Stop Transfer
 |:-----------:|:-------:|:-------:|:-------:|
 | A0 A0 A0 A0 |  00 01  |  17 02  |  00 00  |
 
-(#samples)
+# samples
 
 ## sample on raspberry pi 2 only with python3 and without x86-emu/wine etc.
 
