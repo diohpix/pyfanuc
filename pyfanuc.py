@@ -287,6 +287,17 @@ class pyfanuc(object):
 		if st["len"]<8:
 			return
 		return {"run":unpack(">i",st["data"][0:4])[0],"main":unpack(">i",st["data"][4:])[0]}
+	def readprogname(self): #31i
+		"""
+		Get current directory
+		requests 1 (default) for foreground or 2 for background
+		returns directoryname
+		"""
+		st=self._req_rdsingle(1,1,0xb9)
+		if st["len"]>=0:
+			p=st["data"].split(b'\0', 1)[0]
+			return p.decode()
+		return None
 	def settime(self,h=-1,m=0,s=0):
 		"""
 		Set Time to Parameter-Values or actual PC-Time
