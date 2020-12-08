@@ -315,8 +315,28 @@ class pyfanuc(object):
 				start=number+1
 				ret[number]={"size":size,"comment":comment.decode()}
 	def readalarm(self):
-		"Read alarm codes - to implement"
-		pass
+		"Read alarm Bitfield"
+		st=self._req_rdsingle(1,1,0x1a)
+		if st["len"]==4:
+			return unpack(">L",st["data"])[0]
+		return None
+	def readalarmcode(self,type,withtext=0,maxmsgs=-1,textlength=32):
+		"Read alarm code / msg"
+		#readalarmmsg	Returns Alarmcode+Msgtext	1,1,0x23,int32 Type,int32 MaxMsgs,int32 0 w/o or 1/2 with text,int32 MaxTextLength
+		#											int32 AlarmCode,int32 AlarmType,int32 Axis,int32 TextLength,text/trash
+		if maxmsgs<=0:
+			maxmsgs=int(self.sysinfo['axes'])
+		st=self._req_rdsingle(1,1,0x23,type,maxmsgs,withtext,textlength)
+		ret=[]
+		if st["len"] > 0:
+			for pos in range(0,st["len"],4*4+textlength):
+				entry=dict(zip(['alarmcode','alarmtype','axis'],unpack(">iii",st["data"][pos:pos+4*3])))
+				txlen=unpack(">i",st["data"][pos+4*3:pos+4*4])[0]
+				if txlen>0 and withtext>0:
+					entry["text"]=st["data"][pos+4*4:pos+4*4+textlength]
+				ret.append(entry)
+			return ret
+		return None
 	def readdir_current(self,fgbg=1): #31i
 		"""
 		Get current directory
