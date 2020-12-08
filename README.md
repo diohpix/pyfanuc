@@ -238,5 +238,5 @@ Stop Transfer
 
 ## sample on Samsung A51 with Pydroid-Android 
 
-![Test Image](/images/Pydroid_3_Screenshot_A51.jpg)
+![Test Image](/images/Pydroid_3_Screenshot_A51.png)
 
