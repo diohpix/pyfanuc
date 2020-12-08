@@ -1,6 +1,8 @@
 # pyfanuc
 focas fanuc protocol-analysis to python-source
 
+[samplescreens on raspberry and android](#samples)
+
 The python-source is based on protocol analysis.
 The problem is, that the Fanuc Focas Library does not have proper linux support.
 The current target platform for protocol-analysis is an EDM-machine with a 160 control and a Robodrill 30i.
@@ -228,7 +230,13 @@ Stop Transfer
 |:-----------:|:-------:|:-------:|:-------:|
 | A0 A0 A0 A0 |  00 01  |  17 02  |  00 00  |
 
+(#samples)
+
 ## sample on raspberry pi 2 only with python3 and without x86-emu/wine etc.
 
 ![Test Image](/images/test.png)
+
+## sample on Samsung A51 with Pydroid-Android 
+
+![Test Image](/images/Pydroid_3_Screenshot_A51.jpg)
 
