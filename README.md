@@ -19,10 +19,13 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 | readpmc | read pmc-variables |
 | readexecprog	| execute linecode |
 | readprognum | actual main/run program |
+| readalarm | read alarm bitfield |
+| readalarmcode | read alarm code/msg |
 | settime | set date/time |
 | listprog	| listprograms |
-| getprog | program read test |
+| getprog | program read test (experimental) |
 | readactfeed | actual feedrate |
+| readactspindlespeed | actual spindlespeed |
 | readaxis | actual axis-values |
 | getdate | read date |
 | gettime | read time |
@@ -35,6 +38,7 @@ The current target platform for protocol-analysis is an EDM-machine with a 160 c
 | readdir_info	| directory-info |
 | readdir | read directory (one block) |
 | readdir_complete	| read complete directory |
+| readmainprogname | read mainprog name with path |
 
 ### subfunctions
 |function|description|
