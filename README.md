@@ -238,5 +238,15 @@ Stop Transfer
 
 ## sample on Samsung A51 with Pydroid-Android 
 
+import pyfanuc
+conn=pyfanuc('192.168.0.61')
+if conn.connect():
+	print("connected")
+	print('type:'+conn.sysinfo['cnctype'].decode())
+	print(conn.getdatetime())
+	print(conn.statinfo())
+if conn.disconnect():
+	print("disconnected")
+
 ![Test Image](/images/Pydroid_3_Screenshot_A51.png)
 
