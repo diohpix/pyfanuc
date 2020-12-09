@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-#0.1 pyfanuc init release
-#0.11 extend to multipacket
-#0.12 readaxis
 import socket,time,datetime
 from struct import pack,unpack
 
@@ -168,6 +165,21 @@ class pyfanuc(object):
 		if st["len"]==0x12:
 			self.sysinfo=dict(zip(['addinfo','maxaxis','cnctype','mttype','series','version','axes'],
 			unpack(">HH2s2s4s4s2s",st["data"])))
+
+	FORMAT_AXIS,FORMAT_TOOLOFF,FORMAT_MACRO,FORMAT_WORKZOFF,FORMAT_CUTFR=0,1,2,3,4;
+	def getformat(self,type=0):
+		"get typespecific numberformat"
+		st=self._req_rdsingle(1,1,0x1b,type)
+		if st["len"]>=4+2*2:
+			n={'type':type,'count':unpack(">i",st["data"][0:4])[0]}
+			t=[]
+			for x in range(4,st["len"],4):
+				t.append(dict(zip(['decinput','decoutput'],unpack(">HH",st["data"][x:x+4]))))
+			if len(t)>1:
+				n["dec"]=t
+			else:
+				n.update(t[0])
+			return n
 
 	ABS=1;REL=2;REF=4;SKIP=8;DIST=16
 	ALLAXIS=-1
@@ -462,12 +474,6 @@ class pyfanuc(object):
 		st=self._req_rdsingle(1,1,0x25)
 		return self._decode8(st['data']) if st['len']==8 else None
 
-# D1870 remain-wirelength in m
-# D1874 wirelength complete
-# D2204 conductivity*48
-
-import locale
-locale.setlocale(locale.LC_ALL, 'deu_deu')
 if __name__ == '__main__':
 	conn=pyfanuc('192.168.0.70')
 	if conn.connect():
